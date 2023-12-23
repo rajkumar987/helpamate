@@ -1,53 +1,57 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
+import { FlatList, StyleSheet, Animated } from "react-native";
+import { pages } from "../utils/contants";
 import { Text, View } from "./Themed";
-import { TouchableOpacity } from "react-native";
-import { Page } from "../utils/interfaces";
+import OnBoaringItem from "./OnBoaringItem";
+import OnBoradingPaginator from "./OnBoradingPaginator";
 
-const OnBoarding = ({ pages }: { pages: Page[] }) => {
-  const [currentPage, setCurrentPage] = useState(0);
+const OnBoarding = () => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const scrollX = useRef(new Animated.Value(0)).current;
+  const slideRef = useRef(null);
+
+  const viewableItemsChanged = useRef(({ viewableItems }: any) => {
+    setCurrentIndex(viewableItems[0].index);
+  }).current;
+
+  const viewConfig = useRef({ viewAreaCoveragePercentThreshold: 50 }).current;
   return (
-    <View className="w-full h-screen justify-around ">
-      <View>
-        {pages[currentPage].image}
-        <View className="items-center gap-4 px-5">
-          <Text className="text-3xl font-semibold tracking-wider">
-            {pages[currentPage].title}
-          </Text>
-          <Text className="text-gray-400 font-medium text-center">
-            {pages[currentPage].subtitle}
-          </Text>
-        </View>
+    <View style={styles.container}>
+      <View style={{ flex: 5 }}>
+        <FlatList
+          data={pages}
+          renderItem={({ item }) => <OnBoaringItem item={item} />}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          pagingEnabled
+          bounces={false}
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+            {
+              useNativeDriver: false,
+            }
+          )}
+          onViewableItemsChanged={viewableItemsChanged}
+          viewabilityConfig={viewConfig}
+          ref={slideRef}
+        />
       </View>
-
-      <View className=" flex-row  justify-between items-center px-5 ">
-        <TouchableOpacity>
-          <Text className="text-lg tracking-wider text-gray-600">Skip</Text>
-        </TouchableOpacity>
-        <View className="flex-row gap-2">
-          {pages.map((page, _pageIndex) => {
-            return (
-              <TouchableOpacity
-                onPress={() => setCurrentPage(_pageIndex)}
-                key={_pageIndex}
-              >
-                <View
-                  className={`w-2 h-2 rounded-full ${
-                    _pageIndex == currentPage ? "bg-blue-800" : "bg-gray-400"
-                  }`}
-                ></View>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-        <TouchableOpacity
-          onPress={() => setCurrentPage(currentPage + 1)}
-          disabled={currentPage == pages.length - 1}
-        >
-          <Text className="text-lg tracking-wider text-gray-600">Next</Text>
-        </TouchableOpacity>
-      </View>
+      <OnBoradingPaginator
+        pages={pages}
+        scrollX={scrollX}
+        currentIndex={currentIndex}
+        slideRef={slideRef}
+      />
     </View>
   );
 };
 
 export default OnBoarding;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
