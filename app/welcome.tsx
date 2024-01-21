@@ -7,6 +7,7 @@ import {
   useWindowDimensions,
 } from "react-native";
 import React from "react";
+import { Link } from "expo-router";
 
 const welcome = () => {
   const { width, height } = useWindowDimensions();
@@ -22,7 +23,9 @@ const welcome = () => {
       </View>
       <View className="flex-1 w-4/5 items-center gap-4">
         <TouchableOpacity className="bg-black px-10 py-2.5 rounded-full w-full">
-          <Text className="text-white text-xl text-center">Sign In</Text>
+          <Link href="/login">
+            <Text className="text-white text-xl text-center">Sign In</Text>
+          </Link>
         </TouchableOpacity>
         <Text className="text-xl font-semibold">Or</Text>
         <Text className="text-gray-600">If you are a first time user ?</Text>

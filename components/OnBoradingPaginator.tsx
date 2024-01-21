@@ -8,6 +8,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { Text } from "./Themed";
 import { router } from "expo-router";
+import { setItem } from "../utils/asyncStorage";
 
 const OnBoradingPaginator = ({
   pages,
@@ -26,7 +27,7 @@ const OnBoradingPaginator = ({
     }
   }, [currentIndex]);
 
-  const handlePress = (buttonType: string) => {
+  const handlePress = async (buttonType: string) => {
     switch (buttonType) {
       case "skip":
         slideRef.current.scrollToIndex({ index: pages.length - 1 });
@@ -35,7 +36,8 @@ const OnBoradingPaginator = ({
         slideRef.current.scrollToIndex({ index: currentIndex + 1 });
         return;
       case "Login":
-        router.replace("/welcome");
+        setItem("ONBOARDED", "true");
+        router.replace("/login");
       default:
         return;
     }
@@ -43,7 +45,7 @@ const OnBoradingPaginator = ({
   return (
     <View className="w-screen flex-1 flex-row items-center px-4">
       <TouchableOpacity className="flex-1" onPress={() => handlePress("skip")}>
-        <Text className="text-lg font-semibold">Skip</Text>
+        <Text className="text-lg font-semibold text-black">Skip</Text>
       </TouchableOpacity>
       <View className="flex-row flex-2 justify-center">
         {pages.map((each: any, i: any) => {
@@ -71,7 +73,7 @@ const OnBoradingPaginator = ({
         className="flex-1 items-end"
         onPress={() => handlePress(buttonText)}
       >
-        <Text className="text-lg font-semibold">{buttonText} </Text>
+        <Text className="text-lg font-semibold text-black">{buttonText} </Text>
       </TouchableOpacity>
     </View>
   );

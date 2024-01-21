@@ -29,6 +29,7 @@ export default OnBoaringItem;
 const styles = StyleSheet.create({
   constainer: {
     flex: 1,
+    backgroundColor: "#fff",
   },
   image: {
     flex: 0.6,
